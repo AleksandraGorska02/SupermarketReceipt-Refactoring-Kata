@@ -14,6 +14,7 @@ class ShoppingCartTest {
     private SupermarketCatalog catalog;
     private Product toothbrush;
     private Product apples;
+    private Teller teller; // Dodajemy Teller
 
     @BeforeEach
     void setUp() {
@@ -23,6 +24,8 @@ class ShoppingCartTest {
         apples = new Product("Apples", ProductUnit.KILO);
         catalog.addProduct(toothbrush, 1.50);
         catalog.addProduct(apples, 2.00);
+
+        teller = new Teller(catalog); // Inicjalizacja Teller
     }
 
     // Mock implementation of SupermarketCatalog for testing
@@ -51,34 +54,31 @@ class ShoppingCartTest {
         assertEquals(3.0, quantities.get(toothbrush), 0.001);
     }
 
+    // Ten test jest teraz redundantny, ponieważ Teller pośrednio go testuje, ale zostawiam
     @Test
     void handleNoOffersCreatesNoDiscounts() {
         ShoppingCart cart = new ShoppingCart();
         cart.addItem(toothbrush);
-        Receipt receipt = new Receipt();
 
-        // Empty offers map
-        Map<Product, Offer> emptyOffers = new HashMap<>();
-        cart.handleOffers(receipt, emptyOffers, catalog);
+        // Używamy Teller do przeprowadzenia transakcji
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
 
         assertTrue(receipt.getDiscounts().isEmpty());
     }
 
-    // --- Offer Tests ---
+    // --- Offer Tests: Testujemy system przez klasę Teller ---
 
     @Test
     void handleThreeForTwoOffer() {
+        // Konfiguracja oferty w Teller
+        teller.addSpecialOffer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 4.0); // 4 units @ 1.50 each
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0)); // Argument ignored
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
 
-        // Total units: 4.0. Groups of 3: 1. Remainder: 1.
-        // Should pay for 2 items in the group + 1 remainder = 3 items total.
-        // Discount should be 1 item's price: 1.50
+        // Oczekiwana logika: Discount should be 1 item's price: 1.50
         List<Discount> discounts = receipt.getDiscounts();
         assertEquals(1, discounts.size());
         assertEquals(-1.50, discounts.get(0).getDiscountAmount(), 0.001);
@@ -87,27 +87,27 @@ class ShoppingCartTest {
 
     @Test
     void handleThreeForTwoOfferWithLessThanThree() {
+        teller.addSpecialOffer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 2.0); // 2 units @ 1.50 each
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0));
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
+
         assertTrue(receipt.getDiscounts().isEmpty());
     }
 
     @Test
     void handleTenPercentDiscountOffer() {
+        // Konfiguracja oferty w Teller
+        teller.addSpecialOffer(SpecialOfferType.TEN_PERCENT_DISCOUNT, apples, 10.0);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(apples, 2.5); // 2.5 kg @ 2.00 per kg = 5.00 full price
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(apples, new Offer(SpecialOfferType.TEN_PERCENT_DISCOUNT, apples, 10.0)); // 10%
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
 
-        // Discount: 10% of 5.00 = 0.50
+        // Oczekiwana logika: Discount: 10% of 5.00 = 0.50
         List<Discount> discounts = receipt.getDiscounts();
         assertEquals(1, discounts.size());
         assertEquals(-0.50, discounts.get(0).getDiscountAmount(), 0.001);
@@ -116,17 +116,15 @@ class ShoppingCartTest {
 
     @Test
     void handleTwoForAmountOffer() {
+        // Konfiguracja oferty w Teller
+        teller.addSpecialOffer(SpecialOfferType.TWO_FOR_AMOUNT, toothbrush, 2.00);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 3.0); // 3 units @ 1.50 each = 4.50 full price
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.TWO_FOR_AMOUNT, toothbrush, 2.00)); // 2 for 2.00
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
 
-        // Total units: 3. Groups of 2: 1. Remainder: 1.
-        // Price: (1 group * 2.00) + (1 remainder * 1.50) = 3.50
-        // Discount: 4.50 - 3.50 = 1.00
+        // Oczekiwana logika: Discount: 4.50 - 3.50 = 1.00
         List<Discount> discounts = receipt.getDiscounts();
         assertEquals(1, discounts.size());
         assertEquals(-1.00, discounts.get(0).getDiscountAmount(), 0.001);
@@ -135,29 +133,27 @@ class ShoppingCartTest {
 
     @Test
     void handleTwoForAmountOfferWithLessThanTwo() {
+        teller.addSpecialOffer(SpecialOfferType.TWO_FOR_AMOUNT, toothbrush, 2.00);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 1.0); // 1 unit @ 1.50
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.TWO_FOR_AMOUNT, toothbrush, 2.00));
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
+
         assertTrue(receipt.getDiscounts().isEmpty());
     }
 
     @Test
     void handleFiveForAmountOffer() {
+        // Konfiguracja oferty w Teller
+        teller.addSpecialOffer(SpecialOfferType.FIVE_FOR_AMOUNT, toothbrush, 5.00);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 7.0); // 7 units @ 1.50 each = 10.50 full price
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.FIVE_FOR_AMOUNT, toothbrush, 5.00)); // 5 for 5.00
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
 
-        // Total units: 7. Groups of 5: 1. Remainder: 2.
-        // Price: (1 group * 5.00) + (2 remainder * 1.50) = 5.00 + 3.00 = 8.00
-        // Discount: 10.50 - 8.00 = 2.50
+        // Oczekiwana logika: Discount: 10.50 - 8.00 = 2.50
         List<Discount> discounts = receipt.getDiscounts();
         assertEquals(1, discounts.size());
         assertEquals(-2.50, discounts.get(0).getDiscountAmount(), 0.001);
@@ -166,44 +162,44 @@ class ShoppingCartTest {
 
     @Test
     void handleFiveForAmountOfferWithLessThanFive() {
+        teller.addSpecialOffer(SpecialOfferType.FIVE_FOR_AMOUNT, toothbrush, 5.00);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 4.0);
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.FIVE_FOR_AMOUNT, toothbrush, 5.00));
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
+
         assertTrue(receipt.getDiscounts().isEmpty());
     }
 
     @Test
     void handleOffersWithNoItemsInCart() {
-        ShoppingCart cart = new ShoppingCart();
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0));
-        offers.put(apples, new Offer(SpecialOfferType.TEN_PERCENT_DISCOUNT, apples, 10.0));
+        teller.addSpecialOffer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0);
+        teller.addSpecialOffer(SpecialOfferType.TEN_PERCENT_DISCOUNT, apples, 10.0);
 
-        cart.handleOffers(receipt, offers, catalog);
+        ShoppingCart cart = new ShoppingCart();
+
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
+
         assertTrue(receipt.getDiscounts().isEmpty());
     }
 
     @Test
     void handleOffersWithMultipleProductsAndOffers() {
+        // Konfiguracja obu ofert w Teller
+        teller.addSpecialOffer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0);
+        teller.addSpecialOffer(SpecialOfferType.TEN_PERCENT_DISCOUNT, apples, 10.0);
+
         ShoppingCart cart = new ShoppingCart();
         cart.addItemQuantity(toothbrush, 3.0); // 3 units @ 1.50 each
         cart.addItemQuantity(apples, 5.0);      // 5 kg @ 2.00 per kg
-        Receipt receipt = new Receipt();
-        Map<Product, Offer> offers = new HashMap<>();
-        offers.put(toothbrush, new Offer(SpecialOfferType.THREE_FOR_TWO, toothbrush, 0));
-        offers.put(apples, new Offer(SpecialOfferType.TEN_PERCENT_DISCOUNT, apples, 10.0));
 
-        cart.handleOffers(receipt, offers, catalog);
+        Receipt receipt = teller.checksOutArticlesFrom(cart);
 
         List<Discount> discounts = receipt.getDiscounts();
         assertEquals(2, discounts.size());
 
-        // Toothbrush discount
+        // Toothbrush discount: 1.50
         Discount toothbrushDiscount = discounts.stream()
                 .filter(d -> d.getDescription().equals("3 for 2"))
                 .findFirst()
@@ -211,13 +207,12 @@ class ShoppingCartTest {
         assertNotNull(toothbrushDiscount);
         assertEquals(-1.50, toothbrushDiscount.getDiscountAmount(), 0.001);
 
-        // Apples discount
+        // Apples discount: 1.00
         Discount applesDiscount = discounts.stream()
                 .filter(d -> d.getDescription().equals("10.0% off"))
                 .findFirst()
                 .orElse(null);
         assertNotNull(applesDiscount);
-        // Total for apples: 5 kg * 2.00 = 10.00; 10% discount = 1.00
         assertEquals(-1.00, applesDiscount.getDiscountAmount(), 0.001);
     }
 }
