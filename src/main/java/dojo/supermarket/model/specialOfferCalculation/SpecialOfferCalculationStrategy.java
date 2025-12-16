@@ -6,5 +6,5 @@ import dojo.supermarket.model.Product;
 
 public interface SpecialOfferCalculationStrategy {
     // Calculates the discount for a given product based on the offer details
-    Discount calculateDiscount(Product product, double quantity, double unitPrice, Offer offer);
+    Discount calculateDiscount(Product product, double quantity, double unitPrice, double offerArgument);
 }

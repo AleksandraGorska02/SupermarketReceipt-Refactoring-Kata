@@ -6,7 +6,7 @@ public class Offer {
 
     SpecialOfferType offerType;
     private final Product product;
-    public double  argument;
+    double  argument;
     private final SpecialOfferCalculationStrategy strategy;
 
     public Offer(SpecialOfferType offerType, Product product, double argument,SpecialOfferCalculationStrategy strategy) {
@@ -23,7 +23,7 @@ public class Offer {
         if (strategy == null) {
             return null;
         }
-        return strategy.calculateDiscount(this.product, quantity, unitPrice, this);
+        return strategy.calculateDiscount(this.product, quantity, unitPrice, this.argument);
     }
 
 

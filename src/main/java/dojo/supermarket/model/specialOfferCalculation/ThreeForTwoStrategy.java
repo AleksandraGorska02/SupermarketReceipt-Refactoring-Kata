@@ -7,7 +7,7 @@ import dojo.supermarket.model.Product;
 public class ThreeForTwoStrategy implements SpecialOfferCalculationStrategy {
 
     @Override
-    public Discount calculateDiscount(Product product, double quantity, double unitPrice, Offer offer) {
+    public Discount calculateDiscount(Product product, double quantity, double unitPrice, double offerArgument) {
         int quantityAsInt = (int) quantity;
         if (quantityAsInt >= 3) {
             int numberOfXs = quantityAsInt / 3;

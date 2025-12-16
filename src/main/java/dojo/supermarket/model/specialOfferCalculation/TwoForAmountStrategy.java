@@ -7,15 +7,15 @@ import dojo.supermarket.model.Product;
 public class TwoForAmountStrategy implements SpecialOfferCalculationStrategy {
 
     @Override
-    public Discount calculateDiscount(Product product, double quantity, double unitPrice, Offer offer) {
+    public Discount calculateDiscount(Product product, double quantity, double unitPrice, double offerArgument) {
         int quantityAsInt = (int) quantity;
         if (quantityAsInt >= 2) {
 
-                double total = offer.argument * (quantityAsInt / 2) + quantityAsInt % 2 * unitPrice;
+                double total = offerArgument * (quantityAsInt / 2) + quantityAsInt % 2 * unitPrice;
 
                 double discountN = unitPrice * quantity - total;
 
-                return new Discount(product, "2 for " + offer.argument, -discountN);
+                return new Discount(product, "2 for " + offerArgument, -discountN);
 
 
         }

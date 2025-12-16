@@ -20,7 +20,6 @@ public class Teller {
 
         SpecialOfferCalculationStrategy strategy = offerType.getStrategy();
 
-        // Użycie zaktualizowanego konstruktora Offer
         offers.put(product, new Offer(offerType, product, argument, strategy));
     }
 
