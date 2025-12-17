@@ -1,4 +1,6 @@
-package dojo.supermarket.model;
+package dojo.supermarket.model.specialOffer;
+
+import dojo.supermarket.model.product.Product;
 
 public class Discount {
 

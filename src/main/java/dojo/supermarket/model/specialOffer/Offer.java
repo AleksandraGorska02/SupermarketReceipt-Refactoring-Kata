@@ -1,6 +1,7 @@
-package dojo.supermarket.model;
+package dojo.supermarket.model.specialOffer;
 
-import dojo.supermarket.model.specialOfferCalculation.SpecialOfferCalculationStrategy;
+import dojo.supermarket.model.product.Product;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 
 public class Offer {
 

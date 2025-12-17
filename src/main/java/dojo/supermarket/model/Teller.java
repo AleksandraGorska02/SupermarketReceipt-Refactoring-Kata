@@ -1,6 +1,11 @@
 package dojo.supermarket.model;
 
-import dojo.supermarket.model.specialOfferCalculation.SpecialOfferCalculationStrategy;
+import dojo.supermarket.model.product.Product;
+import dojo.supermarket.model.product.ProductQuantity;
+import dojo.supermarket.model.receipt.Receipt;
+import dojo.supermarket.model.specialOffer.Offer;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
+import dojo.supermarket.model.specialOffer.SpecialOfferType;
 
 import java.util.HashMap;
 import java.util.List;

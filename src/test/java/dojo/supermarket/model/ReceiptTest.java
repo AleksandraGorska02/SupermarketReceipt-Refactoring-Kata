@@ -1,5 +1,10 @@
 package dojo.supermarket.model;
 
+import dojo.supermarket.model.product.Product;
+import dojo.supermarket.model.product.ProductUnit;
+import dojo.supermarket.model.receipt.Receipt;
+import dojo.supermarket.model.receipt.ReceiptItem;
+import dojo.supermarket.model.specialOffer.Discount;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 

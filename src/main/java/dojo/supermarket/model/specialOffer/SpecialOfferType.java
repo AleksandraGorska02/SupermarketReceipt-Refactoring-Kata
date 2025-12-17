@@ -1,6 +1,6 @@
-package dojo.supermarket.model;
+package dojo.supermarket.model.specialOffer;
 
-import dojo.supermarket.model.specialOfferCalculation.*;
+import dojo.supermarket.model.specialOffer.types.*;
 
 public enum SpecialOfferType {
     THREE_FOR_TWO {

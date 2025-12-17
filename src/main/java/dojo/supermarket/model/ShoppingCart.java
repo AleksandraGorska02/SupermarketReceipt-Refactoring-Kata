@@ -1,5 +1,11 @@
 package dojo.supermarket.model;
 
+import dojo.supermarket.model.product.Product;
+import dojo.supermarket.model.product.ProductQuantity;
+import dojo.supermarket.model.receipt.Receipt;
+import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.specialOffer.Offer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

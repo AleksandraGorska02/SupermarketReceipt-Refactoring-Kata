@@ -1,4 +1,7 @@
-package dojo.supermarket.model;
+package dojo.supermarket.model.receipt;
+
+import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.product.Product;
 
 import java.util.ArrayList;
 import java.util.Collections;
