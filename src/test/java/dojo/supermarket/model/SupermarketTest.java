@@ -2,6 +2,7 @@ package dojo.supermarket.model;
 
 import dojo.supermarket.ReceiptPrinter;
 import dojo.supermarket.model.coupon.Coupon;
+import dojo.supermarket.model.loyalty.LoyaltyCard;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.receipt.Receipt;
@@ -11,8 +12,7 @@ import org.approvaltests.Approvals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SupermarketTest {
     private SupermarketCatalog catalog;
@@ -420,5 +420,73 @@ public class SupermarketTest {
 
         Approvals.verify(new ReceiptPrinter(40).printReceipt(secondReceipt));
 
+    }
+
+    @Test
+    public void loyalty_points_earned_and_redeemed() {
+        LoyaltyCard card = new LoyaltyCard("customer-123");
+        card.addPoints(100.0); // Starts with $10.00 credit (at 10:1 ratio)
+
+        theCart.addItemQuantity(apples, 10.0); // $19.90 total
+
+        // Checkout with loyalty card
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card);
+
+        // Should see a $10.00 redemption discount
+        // Final total should be $9.90
+        // Customer should earn 9 points on the remaining balance
+        assertEquals(9.0, receipt.getPointsEarned());
+        assertEquals(9.0, card.getPointsBalance()); // 100 - 100
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void earn_points_from_zero_balance() {
+        // Create a new loyalty card with 0 points
+        LoyaltyCard card = new LoyaltyCard("LC-001");
+
+        theCart.addItemQuantity(rice, 2.0); // 2 * 2.99 = 5.98
+
+        // Checkout: 1 point per $1 spent
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card);
+
+        // Final total 5.98 should earn 5 points
+        assertEquals(5.0, receipt.getPointsEarned());
+        assertEquals(5.0, card.getPointsBalance());
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void redemption_with_insufficient_points_for_full_payment() {
+        // Card has 50 points = $5.00 credit (using 10:1 ratio)
+        LoyaltyCard card = new LoyaltyCard("LC-002");
+        card.addPoints(50.0);
+
+        theCart.addItemQuantity(toothbrush, 10.0); // Total $9.90
+
+        // Use a representative product (toothbrush) to avoid NullPointerException
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card);
+
+        // Total should be 9.90 - 5.00 = 4.90
+        // New points earned on 4.90 = 4 points
+        assertEquals(4.0, receipt.getPointsEarned());
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void redemption_limited_by_total_price() {
+        // Card has 500 points = $50.00 credit
+        LoyaltyCard card = new LoyaltyCard("LC-003");
+        card.addPoints(500.0);
+
+        theCart.addItem(toothbrush); // Total $0.99
+
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card);
+
+        // Redemption should be capped at 0.99, not the full 50.00 credit
+        // Total should be 0.00
+        assertEquals(0.0, receipt.getTotalPrice());
+        assertEquals(490.0, card.getPointsBalance());
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
     }
 }

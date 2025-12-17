@@ -1,0 +1,5 @@
+toothbrush                          9.90
+  0.99 * 10
+Redemption(Loyalty Points)         -5.00
+
+Total:                              4.90

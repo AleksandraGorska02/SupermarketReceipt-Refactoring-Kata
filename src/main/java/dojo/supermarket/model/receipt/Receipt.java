@@ -11,6 +11,7 @@ public class Receipt {
 
     private final List<ReceiptItem> items = new ArrayList<>();
     private final List<Discount> discounts = new ArrayList<>();
+    private double pointsEarned;
 
     public double getTotalPrice() {
         double total = 0.0;
@@ -25,6 +26,14 @@ public class Receipt {
 
     public void addProduct(Product p, double quantity, double price, double totalPrice) {
         items.add(new ReceiptItem(p, quantity, price, totalPrice));
+    }
+
+    public void setPointsEarned(double totalAmount) {
+        this.pointsEarned = Math.floor(totalAmount);
+    }
+
+    public double getPointsEarned() {
+        return pointsEarned;
     }
 
     public List<ReceiptItem> getItems() {

@@ -1,11 +1,14 @@
 package dojo.supermarket.model;
 
 import dojo.supermarket.model.coupon.Coupon;
+import dojo.supermarket.model.loyalty.LoyaltyCard;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
 import dojo.supermarket.model.specialOffer.Bundle;
+import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
+import dojo.supermarket.model.specialOffer.types.LoyaltyRedemptionStrategy;
 import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 import dojo.supermarket.model.specialOffer.SpecialOfferType;
 
@@ -49,6 +52,24 @@ public class Teller {
         }
 
         theCart.handleOffers(receipt, offers, bundleOffers, coupons, catalog, checkoutDate);
+
+        return receipt;
+    }
+
+    public Receipt checksOutArticlesFrom(ShoppingCart theCart, LoyaltyCard customerCard) {
+        Receipt receipt = checksOutArticlesFrom(theCart);
+
+
+        if (customerCard != null && customerCard.getPointsBalance() > 0) {
+            Discount redemption = new LoyaltyRedemptionStrategy()
+                    .calculateRedemption(customerCard, receipt.getTotalPrice());
+            receipt.addDiscount(redemption);
+        }
+
+        receipt.setPointsEarned(receipt.getTotalPrice());
+        if (customerCard != null) {
+            customerCard.addPoints(receipt.getPointsEarned());
+        }
 
         return receipt;
     }
