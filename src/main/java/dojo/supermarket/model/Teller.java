@@ -8,7 +8,7 @@ import dojo.supermarket.model.receipt.Receipt;
 import dojo.supermarket.model.specialOffer.Bundle;
 import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
-import dojo.supermarket.model.specialOffer.types.LoyaltyRedemptionStrategy;
+import dojo.supermarket.model.loyalty.LoyaltyRedemptionStrategy;
 import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 import dojo.supermarket.model.specialOffer.SpecialOfferType;
 

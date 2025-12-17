@@ -7,8 +7,8 @@ import dojo.supermarket.model.receipt.Receipt;
 import dojo.supermarket.model.specialOffer.Bundle;
 import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
-import dojo.supermarket.model.specialOffer.types.BundleDiscountStrategy;
-import dojo.supermarket.model.specialOffer.types.CouponDiscountStrategy;
+import dojo.supermarket.model.bundle.BundleDiscountStrategy;
+import dojo.supermarket.model.coupon.CouponDiscountStrategy;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

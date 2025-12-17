@@ -1,8 +1,8 @@
-package dojo.supermarket.model.specialOffer.types;
+package dojo.supermarket.model.coupon;
 
-import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 
 public class CouponDiscountStrategy implements SpecialOfferCalculationStrategy {
     public Discount calculateCouponDiscount(Coupon coupon, double cartQuantity, double unitPrice) {

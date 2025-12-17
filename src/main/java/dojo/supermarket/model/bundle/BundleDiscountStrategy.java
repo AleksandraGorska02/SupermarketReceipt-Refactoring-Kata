@@ -1,7 +1,8 @@
-package dojo.supermarket.model.specialOffer.types;
+package dojo.supermarket.model.bundle;
 
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 
 public class BundleDiscountStrategy implements SpecialOfferCalculationStrategy {
     @Override

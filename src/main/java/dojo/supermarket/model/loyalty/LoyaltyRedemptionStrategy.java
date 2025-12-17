@@ -1,9 +1,8 @@
-package dojo.supermarket.model.specialOffer.types;
+package dojo.supermarket.model.loyalty;
 
-import dojo.supermarket.model.loyalty.LoyaltyCard;
 import dojo.supermarket.model.product.Product;
-import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 
 public class LoyaltyRedemptionStrategy implements SpecialOfferCalculationStrategy {
 
