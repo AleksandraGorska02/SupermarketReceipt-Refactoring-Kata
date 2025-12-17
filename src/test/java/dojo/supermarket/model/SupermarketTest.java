@@ -6,7 +6,7 @@ import dojo.supermarket.model.loyalty.LoyaltyCard;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.receipt.Receipt;
-import dojo.supermarket.model.specialOffer.Bundle;
+import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.specialOffer.SpecialOfferType;
 import org.approvaltests.Approvals;
 import org.junit.jupiter.api.BeforeEach;

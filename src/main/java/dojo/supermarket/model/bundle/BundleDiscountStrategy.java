@@ -11,7 +11,7 @@ public class BundleDiscountStrategy implements SpecialOfferCalculationStrategy {
     }
 
 
-    public static Discount createBundleDiscount(Product product, double totalBundlePrice, double discountPercentage, int numberOfBundles) {
+    public static Discount createBundleDiscount(Product product, double totalBundlePrice, double discountPercentage) {
         double discountAmount = totalBundlePrice * (discountPercentage / 100.0);
         String description = "Bundle Discount ("+product.getName()+")";
 

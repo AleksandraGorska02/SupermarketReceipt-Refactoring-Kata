@@ -1,5 +1,6 @@
 package dojo.supermarket.model.specialOffer;
 
+import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 
@@ -27,9 +28,6 @@ public class Offer {
         this.bundle = bundle;
     }
 
-    Product getProduct() {
-        return product;
-    }
 
 
     public Bundle getBundle() {

@@ -4,7 +4,7 @@ import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
-import dojo.supermarket.model.specialOffer.Bundle;
+import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
 import dojo.supermarket.model.bundle.BundleDiscountStrategy;
@@ -74,11 +74,11 @@ public class ShoppingCart {
                 }
 
 
+                assert representativeProduct != null;
                 Discount discount = BundleDiscountStrategy.createBundleDiscount(
                         representativeProduct,
                         totalBundlePrice,
-                        bundle.getDiscountPercentage(),
-                        numBundles
+                        bundle.getDiscountPercentage()
                 );
 
                 receipt.addDiscount(discount);
