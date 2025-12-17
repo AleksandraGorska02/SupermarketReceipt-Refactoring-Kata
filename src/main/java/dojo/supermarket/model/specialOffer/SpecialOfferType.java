@@ -26,6 +26,12 @@ public enum SpecialOfferType {
         public SpecialOfferCalculationStrategy getStrategy() {
             return new FiveForAmountStrategy();
         }
+    },
+    BUNDLE_DISCOUNT {
+        @Override
+        public SpecialOfferCalculationStrategy getStrategy() {
+            return new BundleDiscountStrategy();
+        }
     };
 
     public abstract SpecialOfferCalculationStrategy getStrategy();
