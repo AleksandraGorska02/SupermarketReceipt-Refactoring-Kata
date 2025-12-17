@@ -7,16 +7,18 @@ import dojo.supermarket.model.specialOffer.Discount;
 
 public class LoyaltyRedemptionStrategy implements SpecialOfferCalculationStrategy {
 
-    public Discount calculateRedemption(LoyaltyCard card, double amountToPay) {
+    public Discount calculateRedemption(LoyaltyCard card, double amountToPay, Product representative) {
         double pointsAvailable = card.getPointsBalance();
+        double maxCreditValue = pointsAvailable / 10.0;
 
-        double creditValue = pointsAvailable / 10.0;
 
-        double appliedCredit = Math.min(creditValue, amountToPay);
-        double pointsToDeduct = Math.ceil(appliedCredit * 10.0);
-        Product loyaltyPlaceholder = new Product("Loyalty Points", ProductUnit.EACH);
+        double appliedCredit = Math.min(maxCreditValue, amountToPay);
+
+       double pointsToDeduct = Math.ceil(appliedCredit * 10.0);
+
         card.redeemPoints(pointsToDeduct);
-        return new Discount(loyaltyPlaceholder, "Redemption", -appliedCredit);
+
+        return new Discount(representative, "Loyalty Points Redemption", -appliedCredit);
     }
     @Override
     public Discount calculateDiscount(Product product, double quantity, double unitPrice, double offerArgument) {

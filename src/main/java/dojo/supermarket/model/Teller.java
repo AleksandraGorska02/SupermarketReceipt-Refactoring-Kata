@@ -40,8 +40,9 @@ public class Teller {
     public void addCoupon(Coupon coupon) {
         coupons.add(coupon);
     }
-    public Receipt checksOutArticlesFrom(ShoppingCart theCart, LocalDate checkoutDate) {
+    public Receipt checksOutArticlesFrom(ShoppingCart theCart, LoyaltyCard customerCard, LocalDate checkoutDate) {
         Receipt receipt = new Receipt();
+
         List<ProductQuantity> productQuantities = theCart.getItems();
         for (ProductQuantity pq : productQuantities) {
             Product p = pq.getProduct();
@@ -51,23 +52,23 @@ public class Teller {
             receipt.addProduct(p, quantity, unitPrice, price);
         }
 
+
         theCart.handleOffers(receipt, offers, bundleOffers, coupons, catalog, checkoutDate);
 
-        return receipt;
-    }
-
-    public Receipt checksOutArticlesFrom(ShoppingCart theCart, LoyaltyCard customerCard) {
-        Receipt receipt = checksOutArticlesFrom(theCart);
-
-
-        if (customerCard != null && customerCard.getPointsBalance() > 0) {
-            Discount redemption = new LoyaltyRedemptionStrategy()
-                    .calculateRedemption(customerCard, receipt.getTotalPrice());
-            receipt.addDiscount(redemption);
-        }
-
-        receipt.setPointsEarned(receipt.getTotalPrice());
         if (customerCard != null) {
+            if (customerCard.getPointsBalance() > 0 && !theCart.getItems().isEmpty()) {
+                Product representative = theCart.getItems().get(0).getProduct();
+
+                LoyaltyRedemptionStrategy redemptionStrategy = new LoyaltyRedemptionStrategy();
+                Discount redemption = redemptionStrategy.calculateRedemption(
+                        customerCard,
+                        receipt.getTotalPrice(),
+                        representative
+                );
+                receipt.addDiscount(redemption);
+            }
+
+            receipt.setPointsEarned(receipt.getTotalPrice());
             customerCard.addPoints(receipt.getPointsEarned());
         }
 
@@ -76,6 +77,14 @@ public class Teller {
 
 
     public Receipt checksOutArticlesFrom(ShoppingCart theCart) {
-        return checksOutArticlesFrom(theCart, LocalDate.now());
+        return checksOutArticlesFrom(theCart, null, LocalDate.now());
+    }
+
+    public Receipt checksOutArticlesFrom(ShoppingCart theCart, LocalDate checkoutDate) {
+        return checksOutArticlesFrom(theCart, null, checkoutDate);
+    }
+
+    public Receipt checksOutArticlesFrom(ShoppingCart theCart, LoyaltyCard customerCard) {
+        return checksOutArticlesFrom(theCart, customerCard, LocalDate.now());
     }
 }

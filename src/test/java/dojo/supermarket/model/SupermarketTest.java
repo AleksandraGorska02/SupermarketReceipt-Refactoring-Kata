@@ -12,6 +12,8 @@ import org.approvaltests.Approvals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SupermarketTest {
@@ -487,6 +489,70 @@ public class SupermarketTest {
         // Total should be 0.00
         assertEquals(0.0, receipt.getTotalPrice());
         assertEquals(490.0, card.getPointsBalance());
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void loyalty_points_with_three_for_two_offer() {
+        LoyaltyCard card = new LoyaltyCard("LC-401");
+
+        theCart.addItem(toothbrush);
+        theCart.addItem(toothbrush);
+        theCart.addItem(toothbrush);
+
+
+        teller.addSpecialOffer(SpecialOfferType.THREE_FOR_TWO, toothbrush, catalog.getUnitPrice(toothbrush));
+
+        // before: 2.97. after: 1.98
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card);
+
+        //  Total pointsld: floor(1.98) = 1 punkt
+        assertEquals(1.0, receipt.getPointsEarned());
+        assertEquals(1.0, card.getPointsBalance());
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void loyalty_points_with_bundle_discount() {
+        LoyaltyCard card = new LoyaltyCard("LC-402");
+        Product toothpaste = new Product("toothpaste", ProductUnit.EACH);
+        catalog.addProduct(toothpaste, 1.79);
+
+        java.util.Map<Product, Double> bundleItems = new java.util.HashMap<>();
+        bundleItems.put(toothbrush, 1.0);
+        bundleItems.put(toothpaste, 1.0);
+        teller.addBundleOffer(new Bundle(bundleItems, 10.0));
+
+        // toothbrush (0.99) + toothpaste (1.79) = 2.78
+        theCart.addItem(toothbrush);
+        theCart.addItem(toothpaste);
+
+        // 10%: -0.28. Sum after: 2.50
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card);
+
+        //  Total pointsld: floor(2.50) = 2 punkty
+        assertEquals(2.0, receipt.getPointsEarned());
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void loyalty_points_with_coupon_and_redemption() {
+
+        LoyaltyCard card = new LoyaltyCard("LC-403");
+        card.addPoints(50.0);
+
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        Coupon coupon = new Coupon(orangeJuice, LocalDate.now().minusDays(1), LocalDate.now().plusDays(1), 6.0, 6.0, 0.5);
+        teller.addCoupon(coupon);
+
+        theCart.addItemQuantity(orangeJuice, 12.0);
+
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, card, LocalDate.now());
+
+        assertEquals(13.0, receipt.getPointsEarned());
+        assertEquals(13.0, card.getPointsBalance()); // 50 - 50 + 13
         Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
     }
 }
