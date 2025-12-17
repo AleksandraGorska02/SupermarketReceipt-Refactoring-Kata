@@ -1,0 +1,4 @@
+orange juice                        4.00
+  2.00 * 2
+
+Total:                              4.00

@@ -1,6 +1,7 @@
 package dojo.supermarket.model;
 
 import dojo.supermarket.ReceiptPrinter;
+import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.receipt.Receipt;
@@ -9,6 +10,9 @@ import dojo.supermarket.model.specialOffer.SpecialOfferType;
 import org.approvaltests.Approvals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SupermarketTest {
     private SupermarketCatalog catalog;
@@ -232,5 +236,189 @@ public class SupermarketTest {
         // Only one complete bundle exists; the second toothbrush should be regular price.
         Receipt receipt = teller.checksOutArticlesFrom(theCart);
         Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void coupon_discount_applied_when_valid_and_quantity_met() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        // Coupon: Valid 13/11 to 15/11. Buy 6, get up to 6 more at 50% off (factor 0.5)
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                6.0, 6.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        // Buy 12 items on Nov 14th (Valid date)
+        for (int i = 0; i < 12; i++) {
+            theCart.addItem(orangeJuice);
+        }
+
+        // 6 items at $2.00 + 6 items at $1.00 (50% off) = $18.00 total
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void coupon_discount_ignored_when_expired() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                6.0, 6.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        for (int i = 0; i < 12; i++) {
+            theCart.addItem(orangeJuice);
+        }
+
+        // Checkout on Nov 16th (Expired)
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 16);
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void coupon_discount_limited_to_max_quantity() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        // Coupon: buy 6, get MAX 6 more at half price
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                6.0, 6.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        // Buy 20 items (Excessive quantity)
+        for (int i = 0; i < 20; i++) {
+            theCart.addItem(orangeJuice);
+        }
+
+        // Only 6 items should be discounted, the rest (14) at full price
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void coupon_can_only_be_used_once() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                6.0, 6.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        for (int i = 0; i < 12; i++) {
+            theCart.addItem(orangeJuice);
+        }
+
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+
+        // First checkout: Coupon should apply
+        Receipt receipt1 = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        assertFalse(receipt1.getDiscounts().isEmpty());
+
+        // Second checkout with same Cart/Teller: Coupon should NOT apply again
+        Receipt receipt2 = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        // We expect 0 discounts in the second receipt because the coupon is "spent"
+        assertTrue(receipt2.getDiscounts().stream().noneMatch(d -> d.getDescription().equals("Coupon Discount")));
+    }
+
+    @Test
+    public void coupon_only_applies_to_its_specific_product() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        // Coupon specifically for orange juice
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                1.0, 1.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        // Add rice to the cart (which is NOT orange juice)
+        theCart.addItem(rice);
+
+        // Checkout on a valid date
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+
+        // The receipt should have no discounts because the product doesn't match
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
+    public void coupon_cannot_be_redeemed_twice_first() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                1.0, 1.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        theCart.addItemQuantity(orangeJuice, 2.0);
+
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+
+        // First checkout applies the coupon
+        Receipt firstReceipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+
+        // Second checkout with the SAME coupon object
+        // Since it's "valid only once", the second receipt should have no discount
+        Receipt secondReceipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(firstReceipt));
+
+
+    }
+    @Test
+    public void coupon_cannot_be_redeemed_twice_second() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15),
+                1.0, 1.0, 0.5
+        );
+        teller.addCoupon(coupon);
+
+        theCart.addItemQuantity(orangeJuice, 2.0);
+
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+
+        // First checkout applies the coupon
+        Receipt firstReceipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+
+        // Second checkout with the SAME coupon object
+        // Since it's "valid only once", the second receipt should have no discount
+        Receipt secondReceipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+
+
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(secondReceipt));
+
     }
 }

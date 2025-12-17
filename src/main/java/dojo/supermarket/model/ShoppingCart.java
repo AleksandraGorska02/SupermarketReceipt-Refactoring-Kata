@@ -1,5 +1,6 @@
 package dojo.supermarket.model;
 
+import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
@@ -7,7 +8,9 @@ import dojo.supermarket.model.specialOffer.Bundle;
 import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
 import dojo.supermarket.model.specialOffer.types.BundleDiscountStrategy;
+import dojo.supermarket.model.specialOffer.types.CouponDiscountStrategy;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,7 +43,8 @@ public class ShoppingCart {
         }
     }
 
-    void handleOffers(Receipt receipt, Map<Product, Offer> offers, List<Offer> bundleOffers, SupermarketCatalog catalog) {
+    void handleOffers(Receipt receipt, Map<Product, Offer> offers, List<Offer> bundleOffers,
+                      List<Coupon> coupons, SupermarketCatalog catalog, LocalDate checkoutDate) {
 
         for (Product p : productQuantities().keySet()) {
             double quantity = productQuantities.get(p);
@@ -78,6 +82,26 @@ public class ShoppingCart {
                 );
 
                 receipt.addDiscount(discount);
+            }
+        }
+        CouponDiscountStrategy couponStrategy = new CouponDiscountStrategy();
+        for (Coupon coupon : coupons) {
+
+            if (coupon.isValid(checkoutDate)) {
+                Product product = coupon.getProduct();
+                double quantityInCart = productQuantities.getOrDefault(product, 0.0);
+
+                if (quantityInCart > 0) {
+                    double unitPrice = catalog.getUnitPrice(product);
+
+
+                    Discount discount = couponStrategy.calculateCouponDiscount(coupon, quantityInCart, unitPrice);
+
+                    if (discount != null) {
+                        receipt.addDiscount(discount);
+                        coupon.markAsUsed();
+                    }
+                }
             }
         }
     }
