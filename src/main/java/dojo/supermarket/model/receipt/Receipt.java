@@ -1,5 +1,6 @@
 package dojo.supermarket.model.receipt;
 
+import dojo.supermarket.model.SupermarketConfig;
 import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.product.Product;
 
@@ -29,7 +30,8 @@ public class Receipt {
     }
 
     public void setPointsEarned(double totalAmount) {
-        this.pointsEarned = Math.floor(totalAmount);
+        double multiplier = SupermarketConfig.getProperty("loyalty.points.per.currency", 1.0);
+        this.pointsEarned = Math.floor(totalAmount * multiplier);
     }
 
     public double getPointsEarned() {

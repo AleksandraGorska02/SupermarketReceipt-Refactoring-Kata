@@ -12,6 +12,7 @@ public class Offer {
     private final SpecialOfferCalculationStrategy strategy;
     private final Bundle bundle;
 
+
     public Offer(SpecialOfferType offerType, Product product, double argument, SpecialOfferCalculationStrategy strategy) {
         this.offerType = offerType;
         this.argument = argument;
