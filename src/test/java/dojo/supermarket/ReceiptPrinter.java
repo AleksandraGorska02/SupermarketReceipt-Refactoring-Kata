@@ -48,7 +48,12 @@ public class ReceiptPrinter {
     }
 
     private String presentDiscount(Discount discount) {
-        String name = discount.getDescription() + "(" + discount.getProduct().getName() + ")";
+        String name;
+          if (discount.getProduct() != null) {
+            name = discount.getDescription() + "(" + discount.getProduct().getName() + ")";
+        } else {
+             name = discount.getDescription();
+        }
         String value = presentPrice(discount.getDiscountAmount());
 
         return formatLineWithWhitespace(name, value);

@@ -60,8 +60,7 @@ public class Teller {
                 LoyaltyRedemptionStrategy redemptionStrategy = new LoyaltyRedemptionStrategy();
                 Discount redemption = redemptionStrategy.calculateRedemption(
                         customerCard,
-                        receipt.getTotalPrice(),
-                        representative
+                        receipt.getTotalPrice()
                 );
                 receipt.addDiscount(redemption);
             }

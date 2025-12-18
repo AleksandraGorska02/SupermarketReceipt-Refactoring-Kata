@@ -1,0 +1,6 @@
+orange juice                       24.00
+  2.00 * 12
+Coupon Discount(orange juice)      -6.00
+Redemption(Loyalty Points)         -5.00
+
+Total:                             13.00

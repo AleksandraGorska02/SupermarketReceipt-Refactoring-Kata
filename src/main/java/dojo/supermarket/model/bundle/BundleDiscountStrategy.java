@@ -18,11 +18,10 @@ public class BundleDiscountStrategy implements SpecialOfferStrategies.BundleOffe
         }
 
         double totalBundleValue = 0;
-        Product representative = null;
 
         for (Map.Entry<Product, Double> entry : bundle.getProductsInBundle().entrySet()) {
             Product p = entry.getKey();
-            if (representative == null) representative = p;
+
 
             double unitPrice = catalog.getUnitPrice(p);
             totalBundleValue += entry.getValue() * numBundles * unitPrice;
@@ -30,7 +29,7 @@ public class BundleDiscountStrategy implements SpecialOfferStrategies.BundleOffe
 
         double discountAmount = totalBundleValue * (bundle.getDiscountPercentage() / 100.0);
 
-        return new Discount(representative, "Bundle Discount", -discountAmount);
+        return new Discount(null, "Bundle Discount", -discountAmount);
     }
 
     private int calculateMaxBundles(Bundle bundle, Map<Product, Double> cartQuantities) {

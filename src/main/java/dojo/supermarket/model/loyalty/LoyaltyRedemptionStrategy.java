@@ -6,7 +6,7 @@ import dojo.supermarket.model.discount.Discount;
 
 public class LoyaltyRedemptionStrategy  {
 
-    public Discount calculateRedemption(LoyaltyCard card, double amountToPay, Product representative) {
+    public Discount calculateRedemption(LoyaltyCard card, double amountToPay) {
         double ratio = SupermarketConfig.getProperty("loyalty.redemption.ratio", 10.0);
         double pointsAvailable = card.getPointsBalance();
         double maxCreditValue = pointsAvailable / ratio;
@@ -18,7 +18,7 @@ public class LoyaltyRedemptionStrategy  {
 
         card.redeemPoints(pointsToDeduct);
 
-        return new Discount(representative, "Loyalty Points Redemption", -appliedCredit);
+        return new Discount(null, "Redemption(Loyalty Points)", -appliedCredit);
     }
 
 }
