@@ -10,4 +10,11 @@
  A function has also been added to calculate how many emax bundles we can create from the products in the basket (it will later be transferred to the strategy).
 8. The next step was to interpret the coupons, aiming to make it as universal as possible. So each coupon contains data, valid from/to check validity, whether used (automatically set to false and when used we change the flag), quantityNeeded, quantityDiscounted, discountFactor, so in order to get the discount described in the example, all we need to do is set quantityNeeded to 6, quantityDiscounted to 6 and discountFactor to 0.5. I assumed that quantityDiscounted means the maximum number of discounted products “can buy 6 more at half price.” This is not precisely defined, so if you buy 11, you get a discount on 5, and if you buy 13, you still get a discount on 6.
 This way, you can, for example, create coupons that simply discount a product by, say, 10% and set a maximum number of discounted products, e.g., 10. Then we set needed to 0.
-9. 
+9. Then loyalty points were added. Customers can provide a loyalty card that has an ID and points assigned to it. For purchases, you get points (1:1) with the money spent, and if you have points in your account, they cover as much of the amount due as they can (until the card is cleared), the rest is paid normally, and you also receive points for what you normally pay.We only take the customer card into account if it is provided   if (customerCard != null) {
+   processLoyaltyProgram(receipt, customerCard, theCart);
+   }
+   and after calculating the remaining offers
+10. Tests have been added to all functionalities.
+11. Then, to get rid of the magic number from the loyalty system (the ratio of points for purchases), I added a singleton with the system configuration, read from the file: resources/supermarket.properties
+12. The next step was further refactoring of the written code. Among other things, fixing the enum and interface. One strategy interface was created, in which the interfaces responsible for standard offers, bundles, and coupons are stored. Additionally, the enum became responsible only for granting standard discount offers.
+13. Then I noticed that during implementation, the functions had become too large, so they were divided into smaller ones. In addition, I changed the printer class from the test folder so that it would print the name of the discounted product with the discount applied only if the name was given. This allowed it to be used to print bundles and loyalty points on the receipt in a transparent manner.
