@@ -1,5 +1,6 @@
 package dojo.supermarket.model;
 
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.receipt.Receipt;
@@ -14,12 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TellerTest {
 
-    private SupermarketCatalog catalog;
+    private SpecialOfferStrategies.SupermarketCatalog catalog;
     private Product toothbrush;
     private Product apples;
 
     // Mock implementation of SupermarketCatalog for testing
-    static class FakeCatalog implements SupermarketCatalog {
+    static class FakeCatalog implements SpecialOfferStrategies.SupermarketCatalog {
         private final Map<String, Double> prices = new HashMap<>();
 
         @Override

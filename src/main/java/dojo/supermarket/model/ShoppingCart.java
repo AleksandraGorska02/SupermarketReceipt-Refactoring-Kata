@@ -41,7 +41,7 @@ public class ShoppingCart {
     }
 
     void handleOffers(Receipt receipt, Map<Product, Offer> offers, List<Bundle> bundles,
-                      List<Coupon> coupons, SupermarketCatalog catalog, LocalDate checkoutDate) {
+                      List<Coupon> coupons, SpecialOfferStrategies.SupermarketCatalog catalog, LocalDate checkoutDate) {
 
 
         applyStandardOffers(receipt, offers, catalog);
@@ -49,7 +49,7 @@ public class ShoppingCart {
         applyCouponOffers(receipt, coupons, catalog, checkoutDate);
     }
 
-    private void applyStandardOffers(Receipt receipt, Map<Product, Offer> offers, SupermarketCatalog catalog) {
+    private void applyStandardOffers(Receipt receipt, Map<Product, Offer> offers, SpecialOfferStrategies.SupermarketCatalog catalog) {
         for (Product p : productQuantities.keySet()) {
             if (offers.containsKey(p)) {
                 double quantity = productQuantities.get(p);
@@ -63,7 +63,7 @@ public class ShoppingCart {
         }
     }
 
-    private void applyBundleOffers(Receipt receipt, List<Bundle> bundles, SupermarketCatalog catalog) {
+    private void applyBundleOffers(Receipt receipt, List<Bundle> bundles, SpecialOfferStrategies.SupermarketCatalog catalog) {
         SpecialOfferStrategies.BundleOfferStrategy bundleStrategy = new BundleDiscountStrategy();
         for (Bundle bundle : bundles) {
             Discount d = bundleStrategy.calculateBundleDiscount(bundle, productQuantities, catalog);
@@ -73,7 +73,7 @@ public class ShoppingCart {
         }
     }
 
-    private void applyCouponOffers(Receipt receipt, List<Coupon> coupons, SupermarketCatalog catalog, LocalDate checkoutDate) {
+    private void applyCouponOffers(Receipt receipt, List<Coupon> coupons, SpecialOfferStrategies.SupermarketCatalog catalog, LocalDate checkoutDate) {
         SpecialOfferStrategies.CouponOfferStrategy couponStrategy = new CouponDiscountStrategy();
         for (Coupon coupon : coupons) {
             Product product = coupon.getProduct();

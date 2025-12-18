@@ -1,0 +1,4 @@
+orange juice                        2.00
+Coupon Discount(orange juice)      -1.00
+
+Total:                              1.00

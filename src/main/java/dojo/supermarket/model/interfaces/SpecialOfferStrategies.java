@@ -1,6 +1,5 @@
 package dojo.supermarket.model.interfaces;
 
-import dojo.supermarket.model.SupermarketCatalog;
 import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.discount.Discount;
@@ -21,6 +20,13 @@ public interface SpecialOfferStrategies {
 
     interface CouponOfferStrategy {
         Discount calculateCouponDiscount(Coupon coupon, double cartQuantity, double unitPrice, LocalDate checkoutDate);
+    }
+
+    interface SupermarketCatalog {
+
+        void addProduct(Product product, double price);
+
+        double getUnitPrice(Product product);
     }
 }
 

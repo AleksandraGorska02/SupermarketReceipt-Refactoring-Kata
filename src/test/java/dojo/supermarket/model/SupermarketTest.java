@@ -2,6 +2,7 @@ package dojo.supermarket.model;
 
 import dojo.supermarket.ReceiptPrinter;
 import dojo.supermarket.model.coupon.Coupon;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 import dojo.supermarket.model.loyalty.LoyaltyCard;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductUnit;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SupermarketTest {
-    private SupermarketCatalog catalog;
+    private SpecialOfferStrategies.SupermarketCatalog catalog;
     private Teller teller;
     private ShoppingCart theCart;
     private Product toothbrush;
@@ -103,6 +104,8 @@ public class SupermarketTest {
     public void percent_discount() {
         theCart.addItem(rice);
         teller.addSpecialOffer(SpecialOfferType.TEN_PERCENT_DISCOUNT, rice, 10.0);
+
+
         Receipt receipt = teller.checksOutArticlesFrom(theCart);
         Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
     }
@@ -255,11 +258,30 @@ public class SupermarketTest {
         teller.addCoupon(coupon);
 
         // Buy 12 items on Nov 14th (Valid date)
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 11; i++) {
             theCart.addItem(orangeJuice);
         }
 
         // 6 items at $2.00 + 6 items at $1.00 (50% off) = $18.00 total
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+    @Test
+    public void coupon_discount_for_one_product() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+        theCart.addItem(orangeJuice);
+
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15), 0, 1, 0.5
+        );
+        teller.addCoupon(coupon);
+
+
+
         java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
         Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
         Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
