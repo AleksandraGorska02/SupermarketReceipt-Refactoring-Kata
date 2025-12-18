@@ -5,7 +5,7 @@ import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
 
-public class LoyaltyRedemptionStrategy implements SpecialOfferCalculationStrategy {
+public class LoyaltyRedemptionStrategy  {
 
     public Discount calculateRedemption(LoyaltyCard card, double amountToPay, Product representative) {
         double ratio = SupermarketConfig.getProperty("loyalty.redemption.ratio", 10.0);
