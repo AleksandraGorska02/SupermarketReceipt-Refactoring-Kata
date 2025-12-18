@@ -43,25 +43,37 @@ public class ShoppingCart {
     void handleOffers(Receipt receipt, Map<Product, Offer> offers, List<Bundle> bundles,
                       List<Coupon> coupons, SupermarketCatalog catalog, LocalDate checkoutDate) {
 
-        for (Product p : productQuantities().keySet()) {
-            double quantity = productQuantities.get(p);
+
+        applyStandardOffers(receipt, offers, catalog);
+        applyBundleOffers(receipt, bundles, catalog);
+        applyCouponOffers(receipt, coupons, catalog, checkoutDate);
+    }
+
+    private void applyStandardOffers(Receipt receipt, Map<Product, Offer> offers, SupermarketCatalog catalog) {
+        for (Product p : productQuantities.keySet()) {
             if (offers.containsKey(p)) {
-                Offer offer = offers.get(p);
+                double quantity = productQuantities.get(p);
                 double unitPrice = catalog.getUnitPrice(p);
-                Discount discount = offer.getDiscount(quantity, unitPrice);
+
+                Discount discount = offers.get(p).getDiscount(quantity, unitPrice);
                 if (discount != null) {
                     receipt.addDiscount(discount);
                 }
             }
         }
+    }
 
-
+    private void applyBundleOffers(Receipt receipt, List<Bundle> bundles, SupermarketCatalog catalog) {
         SpecialOfferStrategies.BundleOfferStrategy bundleStrategy = new BundleDiscountStrategy();
         for (Bundle bundle : bundles) {
             Discount d = bundleStrategy.calculateBundleDiscount(bundle, productQuantities, catalog);
-            if (d != null) receipt.addDiscount(d);
+            if (d != null) {
+                receipt.addDiscount(d);
+            }
         }
+    }
 
+    private void applyCouponOffers(Receipt receipt, List<Coupon> coupons, SupermarketCatalog catalog, LocalDate checkoutDate) {
         SpecialOfferStrategies.CouponOfferStrategy couponStrategy = new CouponDiscountStrategy();
         for (Coupon coupon : coupons) {
             Product product = coupon.getProduct();
