@@ -1,4 +1,4 @@
-package dojo.supermarket.model.specialOffer;
+package dojo.supermarket.model.discount;
 
 import dojo.supermarket.model.product.Product;
 

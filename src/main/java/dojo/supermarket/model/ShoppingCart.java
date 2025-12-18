@@ -5,11 +5,11 @@ import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
 import dojo.supermarket.model.bundle.Bundle;
-import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
 import dojo.supermarket.model.bundle.BundleDiscountStrategy;
 import dojo.supermarket.model.coupon.CouponDiscountStrategy;
-import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

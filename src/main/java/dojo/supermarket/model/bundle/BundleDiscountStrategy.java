@@ -2,8 +2,8 @@ package dojo.supermarket.model.bundle;
 
 import dojo.supermarket.model.SupermarketCatalog;
 import dojo.supermarket.model.product.Product;
-import dojo.supermarket.model.specialOffer.Discount;
-import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
+import dojo.supermarket.model.discount.Discount;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 import java.util.Map;
 
 public class BundleDiscountStrategy implements SpecialOfferStrategies.BundleOfferStrategy {

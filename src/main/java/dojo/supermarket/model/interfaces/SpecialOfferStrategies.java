@@ -1,9 +1,9 @@
-package dojo.supermarket.model.specialOffer.types;
+package dojo.supermarket.model.interfaces;
 
 import dojo.supermarket.model.SupermarketCatalog;
 import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.coupon.Coupon;
-import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.product.Product;
 
 import java.time.LocalDate;

@@ -1,5 +1,6 @@
 package dojo.supermarket.model.specialOffer;
 
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 import dojo.supermarket.model.specialOffer.types.*;
 
 public enum SpecialOfferType {

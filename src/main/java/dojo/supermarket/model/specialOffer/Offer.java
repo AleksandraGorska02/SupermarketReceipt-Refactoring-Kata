@@ -1,7 +1,8 @@
 package dojo.supermarket.model.specialOffer;
 
+import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.product.Product;
-import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 
 public class Offer {
 

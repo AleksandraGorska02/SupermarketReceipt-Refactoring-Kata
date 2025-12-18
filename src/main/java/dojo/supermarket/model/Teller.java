@@ -6,7 +6,7 @@ import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
 import dojo.supermarket.model.bundle.Bundle;
-import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
 import dojo.supermarket.model.loyalty.LoyaltyRedemptionStrategy;
 import dojo.supermarket.model.specialOffer.SpecialOfferType;

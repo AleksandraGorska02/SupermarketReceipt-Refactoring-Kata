@@ -3,7 +3,7 @@ package dojo.supermarket;
 import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.receipt.Receipt;
 import dojo.supermarket.model.receipt.ReceiptItem;
-import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.discount.Discount;
 
 import java.util.Locale;
 

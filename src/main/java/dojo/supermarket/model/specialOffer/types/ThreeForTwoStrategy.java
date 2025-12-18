@@ -1,6 +1,7 @@
 package dojo.supermarket.model.specialOffer.types;
 
-import dojo.supermarket.model.specialOffer.Discount;
+import dojo.supermarket.model.discount.Discount;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 import dojo.supermarket.model.product.Product;
 
 public class ThreeForTwoStrategy implements SpecialOfferStrategies.SingleProductOfferStrategy {

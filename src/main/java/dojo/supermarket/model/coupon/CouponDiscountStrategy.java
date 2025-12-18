@@ -1,7 +1,7 @@
 package dojo.supermarket.model.coupon;
 
-import dojo.supermarket.model.specialOffer.Discount;
-import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
+import dojo.supermarket.model.discount.Discount;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 
 import java.time.LocalDate;
 
