@@ -9,6 +9,7 @@ import dojo.supermarket.model.specialOffer.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
 import dojo.supermarket.model.bundle.BundleDiscountStrategy;
 import dojo.supermarket.model.coupon.CouponDiscountStrategy;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class ShoppingCart {
         }
     }
 
-    void handleOffers(Receipt receipt, Map<Product, Offer> offers, List<Offer> bundleOffers,
+    void handleOffers(Receipt receipt, Map<Product, Offer> offers, List<Bundle> bundles,
                       List<Coupon> coupons, SupermarketCatalog catalog, LocalDate checkoutDate) {
 
         for (Product p : productQuantities().keySet()) {
@@ -59,61 +60,26 @@ public class ShoppingCart {
         }
 
 
-        for (Offer bundleOffer : bundleOffers) {
-            Bundle bundle = bundleOffer.getBundle();
-            int numBundles = calculateMaxBundles(bundle);
-
-            if (numBundles > 0) {
-                double totalBundlePrice = 0;
-                Product representativeProduct = null;
-
-                for (Map.Entry<Product, Double> entry : bundle.getProductsInBundle().entrySet()) {
-                    Product p = entry.getKey();
-                     if (representativeProduct == null) representativeProduct = p;
-                    totalBundlePrice += entry.getValue() * numBundles * catalog.getUnitPrice(p);
-                }
-
-
-                assert representativeProduct != null;
-                Discount discount = BundleDiscountStrategy.createBundleDiscount(
-                        representativeProduct,
-                        totalBundlePrice,
-                        bundle.getDiscountPercentage()
-                );
-
-                receipt.addDiscount(discount);
-            }
+        SpecialOfferStrategies.BundleOfferStrategy bundleStrategy = new BundleDiscountStrategy();
+        for (Bundle bundle : bundles) {
+            Discount d = bundleStrategy.calculateBundleDiscount(bundle, productQuantities, catalog);
+            if (d != null) receipt.addDiscount(d);
         }
-        CouponDiscountStrategy couponStrategy = new CouponDiscountStrategy();
+
+        SpecialOfferStrategies.CouponOfferStrategy couponStrategy = new CouponDiscountStrategy();
         for (Coupon coupon : coupons) {
+            Product product = coupon.getProduct();
+            double quantityInCart = productQuantities.getOrDefault(product, 0.0);
+            double unitPrice = catalog.getUnitPrice(product);
 
-            if (coupon.isValid(checkoutDate)) {
-                Product product = coupon.getProduct();
-                double quantityInCart = productQuantities.getOrDefault(product, 0.0);
+              Discount discount = couponStrategy.calculateCouponDiscount(coupon, quantityInCart, unitPrice, checkoutDate);
 
-                if (quantityInCart > 0) {
-                    double unitPrice = catalog.getUnitPrice(product);
-
-
-                    Discount discount = couponStrategy.calculateCouponDiscount(coupon, quantityInCart, unitPrice);
-
-                    if (discount != null) {
-                        receipt.addDiscount(discount);
-                        coupon.markAsUsed();
-                    }
-                }
+            if (discount != null) {
+                receipt.addDiscount(discount);
+                coupon.markAsUsed();
             }
         }
     }
 
-    private int calculateMaxBundles(Bundle bundle) {
-        double max = Double.MAX_VALUE;
-        for (Map.Entry<Product, Double> entry : bundle.getProductsInBundle().entrySet()) {
-            double inCart = productQuantities.getOrDefault(entry.getKey(), 0.0);
-            if (entry.getValue() > 0) {
-                max = Math.min(max, Math.floor(inCart / entry.getValue()));
-            }
-        }
-        return (max == Double.MAX_VALUE) ? 0 : (int) max;
-    }
+
 }

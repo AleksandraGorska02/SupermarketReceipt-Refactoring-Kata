@@ -1,45 +1,40 @@
 package dojo.supermarket.model.specialOffer;
 
-import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.product.Product;
-import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
 
 public class Offer {
 
-    SpecialOfferType offerType;
+    private final SpecialOfferType offerType;
     private final Product product;
-    double  argument;
-    private final SpecialOfferCalculationStrategy strategy;
-    private final Bundle bundle;
+    private final double argument;
 
-
-    public Offer(SpecialOfferType offerType, Product product, double argument, SpecialOfferCalculationStrategy strategy) {
+      public Offer(SpecialOfferType offerType, Product product, double argument) {
         this.offerType = offerType;
         this.argument = argument;
         this.product = product;
-        this.strategy = strategy;
-        this.bundle = null;
     }
 
-    public Offer(SpecialOfferType offerType, Bundle bundle, SpecialOfferCalculationStrategy strategy) {
-        this.offerType = offerType;
-        this.argument = 0.0;
-        this.product = null;
-        this.strategy = strategy;
-        this.bundle = bundle;
+    public SpecialOfferType getType() {
+        return offerType;
+    }
+
+    public double getArgument() {
+        return argument;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
 
-
-    public Bundle getBundle() {
-        return bundle;
-    }
     public Discount getDiscount(double quantity, double unitPrice) {
-          if (strategy == null || offerType == SpecialOfferType.BUNDLE_DISCOUNT) {
+        SpecialOfferStrategies.SingleProductOfferStrategy strategy = offerType.getStrategy();
+
+        if (strategy == null) {
             return null;
         }
+
         return strategy.calculateDiscount(this.product, quantity, unitPrice, this.argument);
     }
-
-
 }

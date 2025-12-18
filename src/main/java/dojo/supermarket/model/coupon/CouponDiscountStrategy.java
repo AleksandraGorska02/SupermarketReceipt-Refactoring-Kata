@@ -1,16 +1,23 @@
 package dojo.supermarket.model.coupon;
 
-import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.specialOffer.Discount;
-import dojo.supermarket.model.specialOffer.types.SpecialOfferCalculationStrategy;
+import dojo.supermarket.model.specialOffer.types.SpecialOfferStrategies;
 
-public class CouponDiscountStrategy implements SpecialOfferCalculationStrategy {
-    public Discount calculateCouponDiscount(Coupon coupon, double cartQuantity, double unitPrice) {
+import java.time.LocalDate;
+
+public class CouponDiscountStrategy implements SpecialOfferStrategies.CouponOfferStrategy {
+
+    @Override
+
+    public Discount calculateCouponDiscount(Coupon coupon, double cartQuantity, double unitPrice, LocalDate checkoutDate) {
+
+        if (!coupon.isValid(checkoutDate)) {
+            return null;
+        }
 
         if (cartQuantity <= coupon.getQuantityNeeded()) {
             return null;
         }
-
 
         double eligibleItems = Math.min(
                 cartQuantity - coupon.getQuantityNeeded(),
@@ -23,8 +30,4 @@ public class CouponDiscountStrategy implements SpecialOfferCalculationStrategy {
         return new Discount(coupon.getProduct(), "Coupon Discount", -totalSavings);
     }
 
-    @Override
-    public Discount calculateDiscount(Product product, double quantity, double unitPrice, double offerArgument) {
-        return null;
-    }
 }

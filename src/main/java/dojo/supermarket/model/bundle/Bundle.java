@@ -22,4 +22,5 @@ public class Bundle {
     public double getDiscountPercentage() {
         return discountPercentage;
     }
+
 }
