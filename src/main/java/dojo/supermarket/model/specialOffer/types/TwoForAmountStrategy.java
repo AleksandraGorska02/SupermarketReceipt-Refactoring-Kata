@@ -8,14 +8,14 @@ public class TwoForAmountStrategy implements SpecialOfferStrategies.SingleProduc
 
     @Override
     public Discount calculateDiscount(Product product, double quantity, double unitPrice, double offerArgument) {
-        int quantityAsInt = (int) quantity;
-        if (quantityAsInt >= 2) {
 
-                double total = offerArgument * (quantityAsInt / 2) + quantityAsInt % 2 * unitPrice;
+        if (quantity >= 2) {
 
-                double discountN = unitPrice * quantity - total;
+            double total = offerArgument * Math.floor(quantity / 2.0) + quantity % 2 * unitPrice;
 
-                return new Discount(product, "2 for " + offerArgument, -discountN);
+            double discountN = unitPrice * quantity - total;
+
+            return new Discount(product, "2 for " + offerArgument, -discountN);
 
 
         }

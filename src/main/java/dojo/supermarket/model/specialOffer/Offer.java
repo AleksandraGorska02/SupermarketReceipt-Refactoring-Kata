@@ -1,8 +1,8 @@
 package dojo.supermarket.model.specialOffer;
 
 import dojo.supermarket.model.discount.Discount;
-import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
+import dojo.supermarket.model.product.Product;
 
 public class Offer {
 
@@ -10,19 +10,12 @@ public class Offer {
     private final Product product;
     private final double argument;
 
-      public Offer(SpecialOfferType offerType, Product product, double argument) {
+    public Offer(SpecialOfferType offerType, Product product, double argument) {
         this.offerType = offerType;
         this.argument = argument;
         this.product = product;
     }
 
-    public SpecialOfferType getType() {
-        return offerType;
-    }
-
-    public double getArgument() {
-        return argument;
-    }
 
     public Product getProduct() {
         return product;

@@ -1,14 +1,14 @@
 package dojo.supermarket.model;
 
+import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.coupon.Coupon;
+import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.loyalty.LoyaltyCard;
+import dojo.supermarket.model.loyalty.LoyaltyRedemptionStrategy;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
-import dojo.supermarket.model.bundle.Bundle;
-import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
-import dojo.supermarket.model.loyalty.LoyaltyRedemptionStrategy;
 import dojo.supermarket.model.specialOffer.SpecialOfferType;
 
 import java.time.LocalDate;
@@ -23,6 +23,7 @@ public class Teller {
     private final Map<Product, Offer> offers = new HashMap<>();
     private final List<Bundle> bundles = new ArrayList<>();
     private final List<Coupon> coupons = new ArrayList<>();
+
     public Teller(SupermarketCatalog catalog) {
         this.catalog = catalog;
     }
@@ -30,6 +31,7 @@ public class Teller {
     public void addSpecialOffer(SpecialOfferType offerType, Product product, double argument) {
         offers.put(product, new Offer(offerType, product, argument));
     }
+
     public void addBundleOffer(Bundle bundle) {
         this.bundles.add(bundle);
     }
@@ -55,7 +57,7 @@ public class Teller {
 
         if (customerCard != null) {
             if (customerCard.getPointsBalance() > 0 && !theCart.getItems().isEmpty()) {
-                Product representative = theCart.getItems().get(0).getProduct();
+
 
                 LoyaltyRedemptionStrategy redemptionStrategy = new LoyaltyRedemptionStrategy();
                 Discount redemption = redemptionStrategy.calculateRedemption(

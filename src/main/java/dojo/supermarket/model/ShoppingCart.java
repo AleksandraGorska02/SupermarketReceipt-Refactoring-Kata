@@ -1,22 +1,18 @@
 package dojo.supermarket.model;
 
+import dojo.supermarket.model.bundle.Bundle;
+import dojo.supermarket.model.bundle.BundleDiscountStrategy;
 import dojo.supermarket.model.coupon.Coupon;
+import dojo.supermarket.model.coupon.CouponDiscountStrategy;
+import dojo.supermarket.model.discount.Discount;
+import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;
-import dojo.supermarket.model.bundle.Bundle;
-import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.specialOffer.Offer;
-import dojo.supermarket.model.bundle.BundleDiscountStrategy;
-import dojo.supermarket.model.coupon.CouponDiscountStrategy;
-import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ShoppingCart {
 
@@ -72,7 +68,7 @@ public class ShoppingCart {
             double quantityInCart = productQuantities.getOrDefault(product, 0.0);
             double unitPrice = catalog.getUnitPrice(product);
 
-              Discount discount = couponStrategy.calculateCouponDiscount(coupon, quantityInCart, unitPrice, checkoutDate);
+            Discount discount = couponStrategy.calculateCouponDiscount(coupon, quantityInCart, unitPrice, checkoutDate);
 
             if (discount != null) {
                 receipt.addDiscount(discount);

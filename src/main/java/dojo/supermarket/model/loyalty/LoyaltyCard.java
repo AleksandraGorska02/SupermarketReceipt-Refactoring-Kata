@@ -9,6 +9,10 @@ public class LoyaltyCard {
         this.pointsBalance = 0.0;
     }
 
+    public String getAccountId() {
+        return accountId;
+    }
+
     public void addPoints(double points) {
         this.pointsBalance += points;
     }
