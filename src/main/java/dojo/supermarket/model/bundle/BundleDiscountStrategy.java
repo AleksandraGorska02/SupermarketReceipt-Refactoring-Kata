@@ -10,7 +10,7 @@ import java.util.Map;
 public class BundleDiscountStrategy implements SpecialOfferStrategies.BundleOfferStrategy {
 
     @Override
-    public Discount calculateBundleDiscount(Bundle bundle, Map<Product, Double> cartQuantities, SupermarketCatalog catalog) {
+    public Discount calculateBundleDiscount(Bundle bundle, Map<Product, Double> cartQuantities, SupermarketCatalog catalog){
 
         int numBundles = calculateMaxBundles(bundle, cartQuantities);
 

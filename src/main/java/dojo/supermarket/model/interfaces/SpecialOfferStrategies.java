@@ -22,11 +22,6 @@ public interface SpecialOfferStrategies {
         Discount calculateCouponDiscount(Coupon coupon, double cartQuantity, double unitPrice, LocalDate checkoutDate);
     }
 
-    interface SupermarketCatalog {
 
-        void addProduct(Product product, double price);
-
-        double getUnitPrice(Product product);
-    }
 }
 
