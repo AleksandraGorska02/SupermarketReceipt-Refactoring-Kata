@@ -6,6 +6,7 @@ import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.coupon.CouponDiscountStrategy;
 import dojo.supermarket.model.discount.Discount;
 import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
+import dojo.supermarket.model.interfaces.SupermarketCatalog;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductQuantity;
 import dojo.supermarket.model.receipt.Receipt;

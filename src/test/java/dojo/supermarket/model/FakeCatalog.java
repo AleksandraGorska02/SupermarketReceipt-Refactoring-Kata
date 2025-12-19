@@ -1,12 +1,12 @@
 package dojo.supermarket.model;
 
-import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
+import dojo.supermarket.model.interfaces.SupermarketCatalog;
 import dojo.supermarket.model.product.Product;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FakeCatalog implements SpecialOfferStrategies.SupermarketCatalog {
+public class FakeCatalog implements SupermarketCatalog {
     private Map<String, Product> products = new HashMap<>();
     private Map<String, Double> prices = new HashMap<>();
 

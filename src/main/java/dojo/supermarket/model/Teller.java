@@ -3,6 +3,7 @@ package dojo.supermarket.model;
 import dojo.supermarket.model.bundle.Bundle;
 import dojo.supermarket.model.coupon.Coupon;
 import dojo.supermarket.model.discount.Discount;
+import dojo.supermarket.model.interfaces.SupermarketCatalog;
 import dojo.supermarket.model.loyalty.LoyaltyCard;
 import dojo.supermarket.model.loyalty.LoyaltyRedemptionStrategy;
 import dojo.supermarket.model.product.Product;

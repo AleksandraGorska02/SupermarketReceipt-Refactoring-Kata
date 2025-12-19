@@ -1,6 +1,6 @@
 package dojo.supermarket.model;
 
-import dojo.supermarket.model.interfaces.SpecialOfferStrategies;
+import dojo.supermarket.model.interfaces.SupermarketCatalog;
 import dojo.supermarket.model.product.Product;
 import dojo.supermarket.model.product.ProductUnit;
 import dojo.supermarket.model.receipt.Receipt;
@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SupermarketTestOld {
 
-    private SpecialOfferStrategies.SupermarketCatalog catalog;
+    private SupermarketCatalog catalog;
     private Product toothbrush;
     private Product apples;
     private Product cheese;
     private Product soap;
 
     // --- Mock Implementation for Testing ---
-    static class FakeCatalog implements SpecialOfferStrategies.SupermarketCatalog {
+    static class FakeCatalog implements SupermarketCatalog {
         private final Map<String, Double> prices = new HashMap<>();
 
         @Override
@@ -212,7 +212,7 @@ class SupermarketTestOld {
     }
     @Test
     void tenPercentDiscount2() {
-        SpecialOfferStrategies.SupermarketCatalog catalog = new FakeCatalog();
+        SupermarketCatalog catalog = new FakeCatalog();
         Product toothbrush = new Product("toothbrush", ProductUnit.EACH);
         catalog.addProduct(toothbrush, 0.99);
         Product apples = new Product("apples", ProductUnit.KILO);
