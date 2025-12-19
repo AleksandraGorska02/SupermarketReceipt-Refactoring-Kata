@@ -15,19 +15,11 @@ public class CouponDiscountStrategy implements SpecialOfferStrategies.CouponOffe
             return null;
         }
 
-        if (cartQuantity <= coupon.getQuantityNeeded()) {
+        double savings = coupon.calculateDiscountValue(cartQuantity, unitPrice);
+        if(savings<=0){
             return null;
         }
-
-        double eligibleItems = Math.min(
-                cartQuantity - coupon.getQuantityNeeded(),
-                coupon.getQuantityDiscounted()
-        );
-
-        double savingsPerItem = unitPrice * (1.0 - coupon.getDiscountFactor());
-        double totalSavings = eligibleItems * savingsPerItem;
-
-        return new Discount(coupon.getProduct(), "Coupon Discount", -totalSavings);
+        return new Discount(coupon.getProduct(), "Coupon Discount", -savings);
     }
 
 }

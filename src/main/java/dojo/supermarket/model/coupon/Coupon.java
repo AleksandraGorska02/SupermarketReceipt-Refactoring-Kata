@@ -31,6 +31,17 @@ public class Coupon {
         this.wasUsed = true;
     }
 
+    // W klasie Coupon.java
+    public double calculateDiscountValue(double cartQuantity, double unitPrice) {
+        if (cartQuantity <= this.quantityNeeded) return 0;
+
+        double eligibleItems = Math.min(
+                cartQuantity - this.quantityNeeded,
+                this.quantityDiscounted
+        );
+        return eligibleItems * unitPrice * (1.0 - this.discountFactor);
+    }
+
     public Product getProduct() {
         return product;
     }

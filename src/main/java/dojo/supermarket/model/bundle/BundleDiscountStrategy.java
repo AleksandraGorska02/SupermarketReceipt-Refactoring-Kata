@@ -12,35 +12,14 @@ public class BundleDiscountStrategy implements SpecialOfferStrategies.BundleOffe
     @Override
     public Discount calculateBundleDiscount(Bundle bundle, Map<Product, Double> cartQuantities, SupermarketCatalog catalog){
 
-        int numBundles = calculateMaxBundles(bundle, cartQuantities);
+        double discountAmount = bundle.calculateDiscountValue(cartQuantities, catalog);
 
-        if (numBundles <= 0) {
+        if (discountAmount <= 0) {
             return null;
         }
-
-        double totalBundleValue = 0;
-
-        for (Map.Entry<Product, Double> entry : bundle.getProductsInBundle().entrySet()) {
-            Product p = entry.getKey();
-
-
-            double unitPrice = catalog.getUnitPrice(p);
-            totalBundleValue += entry.getValue() * numBundles * unitPrice;
-        }
-
-        double discountAmount = totalBundleValue * (bundle.getDiscountPercentage() / 100.0);
 
         return new Discount(null, "Bundle Discount", -discountAmount);
     }
 
-    private int calculateMaxBundles(Bundle bundle, Map<Product, Double> cartQuantities) {
-        double max = Double.MAX_VALUE;
-        for (Map.Entry<Product, Double> entry : bundle.getProductsInBundle().entrySet()) {
-            double inCart = cartQuantities.getOrDefault(entry.getKey(), 0.0);
-            if (entry.getValue() > 0) {
-                max = Math.min(max, Math.floor(inCart / entry.getValue()));
-            }
-        }
-        return (max == Double.MAX_VALUE) ? 0 : (int) max;
-    }
+
 }
