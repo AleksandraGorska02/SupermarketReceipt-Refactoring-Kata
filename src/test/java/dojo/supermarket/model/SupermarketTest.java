@@ -288,6 +288,26 @@ public class SupermarketTest {
     }
 
     @Test
+    public void coupon_discount_for_one_product() {
+        Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
+        catalog.addProduct(orangeJuice, 2.00);
+        theCart.addItem(orangeJuice);
+
+        Coupon coupon = new Coupon(
+                orangeJuice,
+                java.time.LocalDate.of(2025, 11, 13),
+                java.time.LocalDate.of(2025, 11, 15), 0, 1, 0.5
+        );
+        teller.addCoupon(coupon);
+
+
+
+        java.time.LocalDate checkoutDate = java.time.LocalDate.of(2025, 11, 14);
+        Receipt receipt = teller.checksOutArticlesFrom(theCart, checkoutDate);
+        Approvals.verify(new ReceiptPrinter(40).printReceipt(receipt));
+    }
+
+    @Test
     public void coupon_discount_ignored_when_expired() {
         Product orangeJuice = new Product("orange juice", ProductUnit.EACH);
         catalog.addProduct(orangeJuice, 2.00);
